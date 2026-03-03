@@ -1,28 +1,19 @@
-import { Footer } from "./Footer";
-import Menu from "./Menu";
-import { SeoHead } from "./SeoHead";
-import { If } from "./If";
-import { Button } from "./Button";
-import ItineraryCard from "./ItineraryCard";
-import { HeroCard } from "./HeroCard";
-import Description from "./Description";
-import Title from "./Title";
-import ToggleButton from "./ToggleButton";
-import { Tag } from "./Tag";
-import { GuideButton } from "./GuideButton";
+import { Header } from "./Header/Header";
+import { Footer } from "./Footer/Footer";
+import { AppTopBar } from "./AppTopBar/AppTopBar";
+import { AppSidebar } from "./AppSideBar/AppSidebar";
+import { Heading } from "./Heading/Heading";
+import { StatCard } from "./StatCard";
+import { SubscriptionCard } from "./SubscriptionCard";
 
 const elements = {
-  Menu,
-  If,
-  SeoHead,
+  Header,
   Footer,
-  Button,
-  ItineraryCard,
-  HeroCard,
-  Description,
-  Title,
-  ToggleButton,
-  Tag,
-  GuideButton,
+  AppTopBar,
+  AppSidebar,
+  Heading,
+  StatCard,
+  SubscriptionCard,
 };
+
 export default elements;

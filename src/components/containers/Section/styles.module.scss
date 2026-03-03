@@ -3,21 +3,13 @@
 .section {
   width: 100%;
   position: relative;
-  background-color: #fefefe;
+  background-color: transparent;
 
   &.paddings {
     padding: 40px 0;
   }
 }
 
-[data-theme="light"] {
-  .section {
-    background-color: var(--color-bg);
-  }
-}
-
-[data-theme="dark"] {
-  .section {
-    background-color: var(--color-bg);
-  }
-}
+/* Section inherits the page background so all sections
+   share the same base color; individual components can
+   still draw cards and gradients on top. */

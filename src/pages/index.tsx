@@ -1,12 +1,21 @@
 // pages/index.tsx
-import { Containers, Widgets } from "@/components";
+import { Containers } from "@/components";
+import { Widgets } from "@/components";
 
 export default function MainPage() {
   return (
     <Containers.Layout>
-      <Containers.Section el={<Widgets.Hero fullHeight />} />
-      <Containers.Section el={<Widgets.Itinerary />} />
-
+      <Containers.Section
+        el={
+          <>
+            <Widgets.HeroSection />
+            <Widgets.FeaturesSection />
+            <Widgets.HowItWorksSection />
+            <Widgets.TestimonialsSection />
+            <Widgets.CTASection />
+          </>
+        }
+      />
     </Containers.Layout>
   );
 }

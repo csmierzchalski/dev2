@@ -1,12 +1,17 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from 'react';
 import type { User, AuthState } from '@/types/auth';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string, university?: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (user: Partial<User>) => void;
 }
 
@@ -17,74 +22,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = typeof window !== 'undefined'
-      ? window.localStorage.getItem('subwise_user')
-      : null;
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    let isMounted = true;
+
+    const loadUserFromSupabase = async () => {
+      try {
+        const {
+          data: { user: supabaseUser },
+        } = await supabaseBrowserClient.auth.getUser();
+
+        if (!isMounted) return;
+
+        if (supabaseUser) {
+          const metadata = supabaseUser.user_metadata as {
+            full_name?: string;
+            university?: string;
+          } | null;
+
+          const mappedUser: User = {
+            id: supabaseUser.id,
+            email: supabaseUser.email ?? '',
+            name:
+              metadata?.full_name ??
+              supabaseUser.email?.split('@')[0] ??
+              'User',
+            university: metadata?.university,
+            avatar: '👤',
+            createdAt: supabaseUser.created_at ?? new Date().toISOString(),
+          };
+
+          setUser(mappedUser);
+        } else {
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadUserFromSupabase();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        university: 'Mock University',
-        avatar: '👤',
-        createdAt: new Date().toISOString(),
-      };
-
-      setUser(mockUser);
-      window.localStorage.setItem('subwise_user', JSON.stringify(mockUser));
-    } catch {
-      throw new Error('Login failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const signup = async (email: string, password: string, name: string, university?: string) => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const mockUser: User = {
-        id: Date.now().toString(),
-        email,
-        name,
-        university,
-        avatar: '👤',
-        createdAt: new Date().toISOString(),
-      };
-
-      setUser(mockUser);
-      window.localStorage.setItem('subwise_user', JSON.stringify(mockUser));
-    } catch {
-      throw new Error('Signup failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = () => {
+  const logout = async () => {
+    await supabaseBrowserClient.auth.signOut();
     setUser(null);
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('subwise_user');
-    }
   };
 
   const updateUser = (updates: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...updates };
-      setUser(updatedUser);
-      window.localStorage.setItem('subwise_user', JSON.stringify(updatedUser));
-    }
+    if (!user) return;
+    const updatedUser = { ...user, ...updates };
+    setUser(updatedUser);
   };
 
   return (
@@ -93,8 +85,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated: !!user,
         isLoading,
-        login,
-        signup,
         logout,
         updateUser,
       }}

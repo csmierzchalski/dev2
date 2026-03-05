@@ -48,7 +48,7 @@ export function UserMenu() {
   }
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative z-50" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-all"
@@ -68,7 +68,7 @@ export function UserMenu() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 glass border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50 animate-slide-down">
+        <div className="absolute right-0 mt-2 w-64 glass border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-[60] animate-slide-down">
           <div className="p-4 border-b border-white/10">
             <p className="font-semibold text-foreground">{user.name}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>

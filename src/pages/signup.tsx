@@ -13,11 +13,10 @@ import {
   AlertCircle,
   CheckCircle,
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signup } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -61,13 +60,26 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      await signup(
-        formData.email,
-        formData.password,
-        formData.name,
-        formData.university || undefined,
-      );
-      router.push('/app');
+      const { data, error: supabaseError } = await supabaseBrowserClient.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+            university: formData.university || undefined,
+          },
+        },
+      });
+
+      if (supabaseError) {
+        setError(supabaseError.message || 'Failed to create account. Please try again.');
+      } else if (data?.session) {
+        // If Supabase returns a session immediately, go straight to the app
+        router.push('/app');
+      } else {
+        // If email confirmation is required (no session yet), send them to login
+        router.push('/login');
+      }
     } catch {
       setError('Failed to create account. Please try again.');
     } finally {

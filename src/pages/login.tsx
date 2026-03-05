@@ -1,44 +1,63 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useAuth } from '@/lib/auth-context';
 
 export default function LoginPage() {
+  const supabase = supabaseBrowserClient;
   const router = useRouter();
-  const { login } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [error, setError] = useState<string | null>(null);
+
+  // If the user is already logged in (e.g. they hit /login manually),
+  // immediately send them to the app dashboard.
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      void router.replace('/app');
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError(null);
     setIsLoading(true);
 
-    try {
-      await login(formData.email, formData.password);
-      router.push('/app');
-    } catch {
-      setError('Invalid email or password. Please try again.');
-    } finally {
+    const { error: supabaseError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (supabaseError) {
+      setError(
+        supabaseError.message ||
+          'Could not sign in. Please check your credentials and try again.',
+      );
       setIsLoading(false);
+      return;
     }
+
+    // On success, go to dashboard; AuthProvider + middleware will pick up the session
+    router.push('/app');
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Login to SubWise
+          </h1>
           <p className="text-muted-foreground">
-            Sign in to your account to continue
+            Sign in with your email and password.
           </p>
         </div>
 
@@ -51,7 +70,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="glass-card space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
               Email address
             </label>
             <div className="relative">
@@ -62,8 +84,8 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg bg-secondary border border-white/10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="student@university.edu"
               />
@@ -71,7 +93,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
               Password
             </label>
             <div className="relative">
@@ -82,8 +107,8 @@ export default function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3 rounded-lg bg-secondary border border-white/10 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                 placeholder="••••••••"
               />
@@ -92,25 +117,13 @@ export default function LoginPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-white/10 bg-secondary text-primary focus:ring-2 focus:ring-primary"
-              />
-              <span className="text-sm text-muted-foreground">Remember me</span>
-            </label>
-            <Link
-              href="/forgot-password"
-              className="text-sm text-primary hover:text-primary/80 transition-colors"
-            >
-              Forgot password?
-            </Link>
           </div>
 
           <button
@@ -118,20 +131,16 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
-            {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                <span>Signing in...</span>
-              </>
-            ) : (
-              <span>Sign in</span>
-            )}
+            {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
+          <Link
+            href="/signup"
+            className="text-primary hover:text-primary/80 font-medium transition-colors"
+          >
             Sign up for free
           </Link>
         </p>

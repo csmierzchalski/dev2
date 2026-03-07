@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 import { useAuth } from '@/lib/auth-context';
 
 export default function LoginPage() {
   const supabase = supabaseBrowserClient;
-  const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -22,9 +20,9 @@ export default function LoginPage() {
   // immediately send them to the app dashboard.
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      void router.replace('/app');
+      window.location.replace('/app');
     }
-  }, [authLoading, isAuthenticated, router]);
+  }, [authLoading, isAuthenticated]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,8 +43,8 @@ export default function LoginPage() {
       return;
     }
 
-    // On success, go to dashboard; AuthProvider + middleware will pick up the session
-    router.push('/app');
+    // Full page nav so middleware sees session cookies on the next request
+    window.location.href = '/app';
   };
 
   return (

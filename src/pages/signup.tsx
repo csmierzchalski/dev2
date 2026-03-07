@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import {
   Mail,
@@ -16,7 +15,6 @@ import {
 import { supabaseBrowserClient } from '@/utils/supabase/client';
 
 export default function SignupPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -74,11 +72,11 @@ export default function SignupPage() {
       if (supabaseError) {
         setError(supabaseError.message || 'Failed to create account. Please try again.');
       } else if (data?.session) {
-        // If Supabase returns a session immediately, go straight to the app
-        router.push('/app');
+        // Full page nav so middleware sees session cookies
+        window.location.href = '/app';
       } else {
-        // If email confirmation is required (no session yet), send them to login
-        router.push('/login');
+        // Email confirmation required (no session yet)
+        window.location.href = '/login';
       }
     } catch {
       setError('Failed to create account. Please try again.');

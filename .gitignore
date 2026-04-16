@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.vs
+/.vs/dev2
+/.vs/dev2/CopilotIndices/17.13.433.20974
+/.vs/dev2/CopilotIndices/17.13.433.20974/CodeChunks.db
+/.vs/dev2/CopilotIndices/17.13.433.20974/CodeChunks.db-shm
+/.vs/dev2/CopilotIndices/17.13.433.20974/CodeChunks.db-wal
+/.vs/dev2/CopilotIndices/17.13.433.20974/SemanticSymbols.db
+/.vs/dev2/CopilotIndices/17.13.433.20974/SemanticSymbols.db-shm
+/.vs/dev2/CopilotIndices/17.13.433.20974/SemanticSymbols.db-wal
+/.vs/dev2/FileContentIndex
+/.vs/dev2/FileContentIndex/d1b3cced-a070-499a-b79d-e93f5d038c01.vsidx
+/.vs/dev2/v17
+/.vs/dev2/v17/.wsuo
+/.vs/dev2/v17/DocumentLayout.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json

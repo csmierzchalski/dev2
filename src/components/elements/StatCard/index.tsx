@@ -5,6 +5,7 @@ interface StatCardProps {
   value: string | number;
   icon: LucideIcon;
   trend?: string;
+  /** Omit for neutral (muted) trend styling. */
   trendUp?: boolean;
 }
 
@@ -29,7 +30,15 @@ export const StatCard = ({
         </div>
       </div>
       {trend && (
-        <p className={`text-sm ${trendUp ? 'text-green-400' : 'text-red-400'}`}>
+        <p
+          className={`text-sm ${
+            trendUp === undefined
+              ? 'text-muted-foreground'
+              : trendUp
+                ? 'text-green-400'
+                : 'text-red-400'
+          }`}
+        >
           {trend}
         </p>
       )}

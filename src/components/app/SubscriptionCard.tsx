@@ -1,12 +1,19 @@
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, Pencil, Trash2 } from 'lucide-react';
+import { formatGbp } from '@/lib/format-currency';
 import type { Subscription } from '@/types/types';
 import React from 'react';
 
 interface SubscriptionCardProps {
   subscription: Subscription;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
+export const SubscriptionCard = ({
+  subscription,
+  onEdit,
+  onDelete,
+}: SubscriptionCardProps) => {
   const costPerHour =
     subscription.usageHours > 0
       ? subscription.monthlyCost / subscription.usageHours
@@ -41,7 +48,7 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         </div>
         <div className="text-right">
           <p className="text-xl font-bold text-foreground">
-            ${subscription.monthlyCost.toFixed(2)}
+            {formatGbp(subscription.monthlyCost)}
           </p>
           <p className="text-xs text-muted-foreground">per month</p>
         </div>
@@ -53,7 +60,7 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           <div>
             <p className="text-muted-foreground">Cost/Hour</p>
             <p className="font-semibold text-foreground">
-              ${costPerHour.toFixed(2)}
+              {formatGbp(costPerHour)}
             </p>
           </div>
         </div>
@@ -67,6 +74,31 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           </div>
         </div>
       </div>
+
+      {(onEdit || onDelete) && (
+        <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-white/10">
+          {onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Pencil className="w-4 h-4" />
+              Edit
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium hover:bg-destructive/15 text-destructive transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

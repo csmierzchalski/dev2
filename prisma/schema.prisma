@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// Per-user subscription; aligns with `public.subscriptions` when using Supabase.
+model Subscription {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  name        String
+  category    String
+  /// Monthly amount in GBP (Great British Pound).
+  monthlyCost Decimal  @map("monthly_cost") @db.Decimal(12, 2)
+  usageHours  Decimal  @default(0) @map("usage_hours") @db.Decimal(12, 2)
+  renewalDate DateTime @map("renewal_date") @db.Date
+  logo        String   @default("📦")
+  color       String   @default("#6366f1")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}

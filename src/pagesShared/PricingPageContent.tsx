@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Check, Sparkles } from 'lucide-react';
+import { formatGbp } from '@/lib/format-currency';
 import { pricingTiers } from '@/lib/mock-data';
 
 export function PricingPageContent() {
@@ -49,9 +50,9 @@ export function PricingPageContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {pricingTiers.map((tier) => {
-            const price =
+            const amount =
               billingPeriod === 'year' && tier.price > 0
-                ? (tier.price * 12 * 0.8).toFixed(2)
+                ? tier.price * 12 * 0.8
                 : tier.price;
             const period = billingPeriod === 'year' ? 'year' : 'month';
 
@@ -84,7 +85,7 @@ export function PricingPageContent() {
                   <div className="mb-6">
                     <div className="flex items-baseline justify-center">
                       <span className="text-5xl font-bold gradient-text">
-                        ${price}
+                        {formatGbp(amount)}
                       </span>
                       <span className="text-muted-foreground ml-2">
                         /{period}
@@ -92,7 +93,7 @@ export function PricingPageContent() {
                     </div>
                     {billingPeriod === 'year' && tier.price > 0 && (
                       <p className="text-sm text-primary mt-2">
-                        Save ${(tier.price * 12 * 0.2).toFixed(2)} per year
+                        Save {formatGbp(tier.price * 12 * 0.2)} per year
                       </p>
                     )}
                   </div>

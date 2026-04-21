@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { BRAND, STATS } from '@/lib/constants';
+import { formatGbp } from '@/lib/format-currency';
 
 export function HeroSection() {
   return (
@@ -57,7 +58,7 @@ export function HeroSection() {
             </div>
             <div className="glass-card text-center">
               <div className="text-3xl md:text-4xl font-bold gradient-text">
-                ${STATS.averageMonthlySpend}
+                {formatGbp(STATS.averageMonthlySpend)}
               </div>
               <div className="text-sm text-muted-foreground mt-2">
                 Avg Monthly Spend

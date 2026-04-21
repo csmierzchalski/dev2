@@ -1,4 +1,5 @@
 import { Calendar, Clock } from 'lucide-react';
+import { formatGbp } from '@/lib/format-currency';
 import type { Subscription } from '@/types/types';
 
 interface SubscriptionCardProps {
@@ -40,7 +41,7 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
         </div>
         <div className="text-right">
           <p className="text-xl font-bold text-foreground">
-            ${subscription.monthlyCost.toFixed(2)}
+            {formatGbp(subscription.monthlyCost)}
           </p>
           <p className="text-xs text-muted-foreground">per month</p>
         </div>
@@ -52,7 +53,7 @@ export const SubscriptionCard = ({ subscription }: SubscriptionCardProps) => {
           <div>
             <p className="text-muted-foreground">Cost/Hour</p>
             <p className="font-semibold text-foreground">
-              ${costPerHour.toFixed(2)}
+              {formatGbp(costPerHour)}
             </p>
           </div>
         </div>

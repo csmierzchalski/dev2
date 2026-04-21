@@ -70,7 +70,7 @@ export const testimonials: Testimonial[] = [
     role: 'Computer Science Student',
     university: 'MIT',
     content:
-      "I was paying for 8 subscriptions but only using 4 regularly. SubWise helped me identify $47/month in waste. That's textbook money!",
+      "I was paying for 8 subscriptions but only using 4 regularly. SubWise helped me identify £47/month in waste. That's textbook money!",
     avatar: '👩‍💻',
   },
   {
@@ -79,7 +79,7 @@ export const testimonials: Testimonial[] = [
     role: 'Business Major',
     university: 'Stanford',
     content:
-      'The cost-per-hour analytics changed how I think about subscriptions. Now I only keep services I actually use. Saved over $100 last semester.',
+      'The cost-per-hour analytics changed how I think about subscriptions. Now I only keep services I actually use. Saved over £100 last semester.',
     avatar: '👨‍🎓',
   },
   {
@@ -88,7 +88,7 @@ export const testimonials: Testimonial[] = [
     role: 'Design Student',
     university: 'RISD',
     content:
-      'As a design student on a tight budget, every dollar counts. SubWise made it easy to see which subscriptions were worth keeping.',
+      'As a design student on a tight budget, every pound counts. SubWise made it easy to see which subscriptions were worth keeping.',
     avatar: '👩‍🎨',
   },
 ];
@@ -189,32 +189,3 @@ export const faqs: FAQ[] = [
       'Not at all! Our Free tier is perfect for students tracking basic subscriptions. Upgrade to Premium if you want deeper insights, unlimited tracking, and advanced analytics to maximize your savings.',
   },
 ];
-
-export const calculateDashboardStats = () => {
-  const totalMonthlyCost = mockSubscriptions.reduce(
-    (sum, sub) => sum + sub.monthlyCost,
-    0,
-  );
-  const activeSubscriptions = mockSubscriptions.length;
-
-  const today = new Date();
-  const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-  const upcomingRenewals = mockSubscriptions.filter((sub) => {
-    const renewalDate = new Date(sub.renewalDate);
-    return renewalDate >= today && renewalDate <= nextWeek;
-  }).length;
-
-  const totalHours = mockSubscriptions.reduce(
-    (sum, sub) => sum + sub.usageHours,
-    0,
-  );
-  const costPerHour = totalHours > 0 ? totalMonthlyCost / totalHours : 0;
-
-  return {
-    totalMonthlyCost,
-    activeSubscriptions,
-    upcomingRenewals,
-    costPerHour,
-  };
-};
-

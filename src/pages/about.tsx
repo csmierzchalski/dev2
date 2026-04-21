@@ -3,6 +3,7 @@ import { Containers } from "@/components";
 import type { Metadata } from "next";
 import { Target, Users, Heart, Globe } from "lucide-react";
 import { SDG_INFO } from "@/lib/constants";
+import { formatGbp } from "@/lib/format-currency";
 
 export const metadata: Metadata = {
   title: "About SubWise - Our Mission",
@@ -68,7 +69,7 @@ export default function AboutUs() {
                 <div className="space-y-4 text-lg text-foreground/80 leading-relaxed">
                   <p>
                     The average student now manages 12+ digital subscriptions,
-                    spending over $273 per month. Yet research shows that 42% of
+                    spending over {formatGbp(273)} per month. Yet research shows that 42% of
                     this spending goes toward services they rarely or never use.
                   </p>
                   <p>
@@ -136,7 +137,7 @@ export default function AboutUs() {
                 <p className="text-lg text-foreground/80 leading-relaxed max-w-2xl mx-auto">
                   We envision a world where students have complete financial
                   clarity and control over their digital lives. Where every
-                  dollar spent is intentional, every subscription is valued, and
+                  pound spent is intentional, every subscription is valued, and
                   waste—both financial and digital—is a thing of the past.
                 </p>
               </div>
